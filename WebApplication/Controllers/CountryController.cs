@@ -2,23 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApiFriends.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 
 namespace WebApplication.Controllers
 {
     public class CountryController : Controller
     {
+        private readonly string _UriAPI = "https://localhost:44364/api/";
+
         // GET: CountryController
         public ActionResult Index()
         {
-            return View();
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "Countries");
+            var response = client.Get<List<Country>>(request);
+            return View(response.Data);
         }
 
         // GET: CountryController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
+            var response = client.Get<Country>(request);
+            return View(response.Data);
         }
 
         // GET: CountryController/Create
@@ -30,31 +40,54 @@ namespace WebApplication.Controllers
         // POST: CountryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Country model)
         {
             try
             {
+                if (ModelState.IsValid == false)
+                    return View(model);
+
+                var client = new RestClient();
+                var request = new RestRequest(_UriAPI + "Countries", DataFormat.Json);
+                request.AddJsonBody(model);
+
+                var response = client.Post<Country>(request);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ModelState.AddModelError(string.Empty, "Ocorreu um erro, por favor tente mais tarde.");
+                return View(model);
             }
         }
 
         // GET: CountryController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
+            var response = client.Get<Country>(request);
+
+            return View(response.Data);
         }
 
         // POST: CountryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Country model)
         {
             try
             {
+                if (ModelState.IsValid == false)
+                    return View(model);
+
+                var client = new RestClient();
+                var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
+                request.AddJsonBody(model);
+
+                var response = client.Put<Country>(request);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -66,16 +99,26 @@ namespace WebApplication.Controllers
         // GET: CountryController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
+            var response = client.Get<Country>(request);
+
+            return View(response.Data);
         }
 
         // POST: CountryController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Country model)
         {
             try
             {
+                var client = new RestClient();
+                var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
+                request.AddJsonBody(model);
+
+                var response = client.Delete<Country>(request);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
