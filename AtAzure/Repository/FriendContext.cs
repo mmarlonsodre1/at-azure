@@ -14,6 +14,7 @@ namespace ApiFriends.Repository
             modelBuilder.ApplyConfiguration(new FriendShipMapping());
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<ApiFriends.Models.FriendShip> FriendShip { get; set; }
 
     }
 }

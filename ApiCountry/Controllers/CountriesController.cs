@@ -25,14 +25,14 @@ namespace ApiCountry.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
         {
-            return await _context.Countries.ToListAsync();
+            return await _context.Countries.Include(x => x.States).ToListAsync();
         }
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Country>> GetCountry(Guid id)
         {
-            var country = await _context.Countries.FindAsync(id);
+            var country = await _context.Countries.Include(x => x.States).FirstOrDefaultAsync(x => x.Id == id);
 
             if (country == null)
             {
@@ -90,14 +90,14 @@ namespace ApiCountry.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Country>> DeleteCountry(Guid id)
         {
-            var country = await _context.Countries.FindAsync(id);
+            var country = await _context.Countries.Include(x => x.States).FirstOrDefaultAsync(x => x.Id == id);
             if (country == null)
             {
                 return NotFound();
             }
 
             _context.Countries.Remove(country);
-            await _context.SaveChangesAsync();
+            var a = await _context.SaveChangesAsync();
 
             return country;
         }

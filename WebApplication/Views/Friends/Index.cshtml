@@ -34,10 +34,10 @@
                 @Html.DisplayNameFor(model => model.Birthday)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CountryId)
+                Pais
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StateId)
+                Estado
             </th>
             <th></th>
         </tr>
@@ -67,10 +67,10 @@
                 @Html.DisplayFor(modelItem => item.Birthday)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CountryId)
+                @Html.DisplayFor(modelItem => item.Country.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StateId)
+                @Html.DisplayFor(modelItem => item.State.Name)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) 

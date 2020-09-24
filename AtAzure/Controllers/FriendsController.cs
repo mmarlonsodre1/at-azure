@@ -25,14 +25,27 @@ namespace ApiFriends.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Friend>>> GetFriends()
         {
-            return await _context.Friends.ToListAsync();
+            return await _context.Friends.Include(x => x.Country).Include(x => x.State).ToListAsync();
         }
 
         // GET: api/Friends/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Friend>> GetFriend(Guid id)
         {
-            var friend = await _context.Friends.FindAsync(id);
+            var friend = await _context.Friends.Include(x => x.Country).Include(x => x.State).FirstOrDefaultAsync(x => x.Id == id);
+
+            if (friend == null)
+            {
+                return NotFound();
+            }
+
+            return friend;
+        }
+
+        [HttpGet("Persons/{id}")]
+        public async Task<ActionResult<IEnumerable<Friend>>> GetPersons(Guid id)
+        {
+            var friend = await _context.Friends.Include(x => x.Country).Include(x => x.State).Where(x => x.Id != id).ToListAsync();
 
             if (friend == null)
             {

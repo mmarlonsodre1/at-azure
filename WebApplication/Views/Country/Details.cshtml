@@ -31,6 +31,42 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
+</div>
+<br />
+<div>
+    <h1>Estados</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    PhotoUrl
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.States)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PhotoUrl)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

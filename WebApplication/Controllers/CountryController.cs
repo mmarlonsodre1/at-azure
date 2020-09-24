@@ -23,7 +23,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: CountryController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
@@ -63,7 +63,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: CountryController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
@@ -75,7 +75,7 @@ namespace WebApplication.Controllers
         // POST: CountryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Country model)
+        public ActionResult Edit(Guid id, Country model)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: CountryController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Countries/" + id, DataFormat.Json);
@@ -109,7 +109,7 @@ namespace WebApplication.Controllers
         // POST: CountryController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Country model)
+        public ActionResult Delete(Guid id, Country model)
         {
             try
             {

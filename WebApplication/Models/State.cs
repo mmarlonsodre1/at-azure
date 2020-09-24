@@ -7,5 +7,6 @@ namespace ApiFriends.Models
         public Guid Id { set; get; }
         public string Name { set; get; }
         public string PhotoUrl { set; get; }
+        public Guid CountryId { set; get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ApiFriends.Models;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -19,11 +20,28 @@ namespace WebApplication.Controllers
         }
 
         // GET: FriendsController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
             var client = new RestClient();
-            var request = new RestRequest(_UriAPI + "Friends/" + id, DataFormat.Json);
+            var request = new RestRequest(_UriAPI + "Friends/" + id);
             var response = client.Get<Friend>(request);
+
+            var request2 = new RestRequest(_UriAPI + "Friends/Persons/" + id);
+            var persons = client.Get<List<Friend>>(request2);
+            ViewData["Persons"] = persons.Data;
+
+            var request3 = new RestRequest(_UriAPI + "FriendShips/" + id);
+            var friends = client.Get<List<FriendShip>>(request3);
+            ViewData["Friends"] = friends.Data;
+
+            var friendIds = new List<Guid>();
+            foreach (var data in friends.Data)
+            {
+                friendIds.Add(data.FriendId);
+            }
+
+            ViewData["FriendIds"] = friendIds;
+
             return View(response.Data);
         }
 
@@ -59,7 +77,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: FriendsController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Friends/" + id, DataFormat.Json);
@@ -68,10 +86,31 @@ namespace WebApplication.Controllers
             return View(response.Data);
         }
 
+        public ActionResult AddFriendShip(Guid userId, Guid friendId)
+        {
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "FriendShips");
+            var model = new FriendShip { UserId = userId, FriendId = friendId };
+            request.AddJsonBody(model);
+            var response = client.Post<FriendShip>(request);
+
+            return RedirectToAction("Details", "Friends", new { id = userId });
+        }
+
+        public ActionResult DeleteFriendShip(Guid userId, Guid friendId)
+        {
+            var client = new RestClient();
+            var request = new RestRequest(_UriAPI + "FriendShips/" + userId + "/" + friendId);
+            var model = new FriendShip { UserId = userId, FriendId = friendId };
+            var response = client.Delete<FriendShip>(request);
+
+            return RedirectToAction("Details", "Friends", new { id = userId });
+        }
+
         // POST: FriendsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Friend model)
+        public ActionResult Edit(Guid id, Friend model)
         {
             try
             {
@@ -93,7 +132,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: FriendsController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Friends/" + id, DataFormat.Json);
@@ -105,7 +144,7 @@ namespace WebApplication.Controllers
         // POST: FriendsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Friend model)
+        public ActionResult Delete(Guid id, Friend model)
         {
             try
             {

@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Details";
+    var Persons = ViewData["Persons"] as List<ApiFriends.Models.Friend>;
+    var Friends = ViewData["Friends"] as List<ApiFriends.Models.FriendShip>;
+    var FriendIds = ViewData["FriendIds"] as List<Guid>;
 }
 
 <h1>Details</h1>
@@ -67,6 +70,155 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
+</div>
+<div>
+    <h1>Amigos</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PhotoUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Birthday)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Friends)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.PhotoUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrFriend.Birthday)
+                </td>
+                <td>
+                    @Html.ActionLink("DeleteFriendShip", "DeleteFriendShip", new { userId = item.UserId, friendId = item.FriendId })
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<br />
+
+<div>
+    <h1>Pessoas</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PhotoUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Birthday)
+                </th>
+                <th>
+                    Pais
+                </th>
+                <th>
+                    Estado
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Persons)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhotoUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Birthday)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State.Name)
+                </td>
+                <td>
+
+                    @if (FriendIds.Contains(item.Id))
+                    {
+                        @Html.ActionLink("DeleteFriendShip", "DeleteFriendShip", new { userId = Model.Id, friendId = item.Id })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("AddFriendShip", "AddFriendShip", new { userId = Model.Id, friendId = item.Id })
+                    }
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 </div>

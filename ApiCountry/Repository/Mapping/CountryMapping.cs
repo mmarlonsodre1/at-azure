@@ -17,7 +17,7 @@ namespace ApiCountry.Repository.Mapping
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.PhotoUrl).IsRequired();
-            builder.HasMany(x => x.States);
+            builder.HasMany(x => x.States).WithOne(x => x.Country).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
