@@ -11,6 +11,7 @@ namespace WebApplication.Controllers
     public class FriendsController : Controller
     {
         private readonly string _UriAPI = "https://atazureapifriend.azurewebsites.net/api/";
+        private readonly string _UriAPICountry = "http://atazureapicountry.azurewebsites.net/api/";
 
         // GET: FriendsController
         public ActionResult Index()
@@ -18,6 +19,15 @@ namespace WebApplication.Controllers
             var client = new RestClient();
             var request = new RestRequest(_UriAPI + "Friends");
             var response = client.Get<List<Friend>>(request);
+            ViewBag.Count = response.Data.Count;
+
+            var request2 = new RestRequest(_UriAPICountry + "Countries");
+            var response2 = client.Get<List<Country>>(request2);
+            ViewData["Countries"] = response2.Data;
+
+            var request3 = new RestRequest(_UriAPICountry + "States");
+            var response3 = client.Get<List<State>>(request3);
+            ViewData["States"] = response3.Data;
             return View(response.Data);
         }
 

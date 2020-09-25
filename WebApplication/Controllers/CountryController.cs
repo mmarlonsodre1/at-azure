@@ -12,7 +12,7 @@ namespace WebApplication.Controllers
 {
     public class CountryController : Controller
     {
-        private readonly string _UriAPI = "https://localhost:44364/api/";
+        private readonly string _UriAPI = "http://atazureapicountry.azurewebsites.net/api/";
 
         // GET: CountryController
         public ActionResult Index()

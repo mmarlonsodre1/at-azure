@@ -2,8 +2,19 @@
 
 @{
     ViewData["Title"] = "Index";
+    var Countries = ViewData["Countries"] as List<ApiFriends.Models.Country>;
+    var States = ViewData["States"] as List<ApiFriends.Models.State>;
 }
 
+
+<h1>Número de pessoas: @ViewBag.Count</h1>
+<h1>Número de paises: @Countries.Count</h1>
+<h1>Número de estados: @States.Count</h1>
+
+<br />
+<br />
+<br />
+<br />
 <h1>Index</h1>
 
 <p>
