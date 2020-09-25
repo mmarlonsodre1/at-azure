@@ -1,12 +1,22 @@
 {
   "dependencies": {
     "secrets1": {
-      "type": "secrets.user"
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.KeyVault/vaults/FundamentosCsharpTp3WebA",
+      "type": "secrets.keyVault",
+      "connectionId": "VaultUri",
+      "secretStore": null
     },
     "mssql1": {
-      "type": "mssql.local",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/tp1webapplicationdbserver/databases/FundamentosCsharpTp3.WebApplication_db",
+      "type": "mssql.azure",
       "connectionId": "ConnectionString",
-      "secretStore": "LocalSecretsFile"
+      "secretStore": "AzureKeyVault"
+    },
+    "storage1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/atazuremarlon",
+      "type": "storage.azure",
+      "connectionId": "blob",
+      "secretStore": "AzureKeyVault"
     }
   }
 }

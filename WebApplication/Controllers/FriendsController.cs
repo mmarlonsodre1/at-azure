@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ApiFriends.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 
@@ -8,7 +10,7 @@ namespace WebApplication.Controllers
 {
     public class FriendsController : Controller
     {
-        private readonly string _UriAPI = "https://localhost:44344/api/";
+        private readonly string _UriAPI = "https://atazureapifriend.azurewebsites.net/api/";
 
         // GET: FriendsController
         public ActionResult Index()
@@ -54,7 +56,7 @@ namespace WebApplication.Controllers
         // POST: FriendsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Friend model)
+        public ActionResult Create(Friend model, IFormFile file)
         {
             try
             {
@@ -62,12 +64,27 @@ namespace WebApplication.Controllers
                     return View(model);
 
                 var client = new RestClient();
-                var request = new RestRequest(_UriAPI + "Friends", DataFormat.Json);
-                request.AddJsonBody(model);
+                var request = new RestRequest(_UriAPI + "Friends/Photo");
+                request.AlwaysMultipartFormData = true;
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    request.AddFile("file", fileBytes, file.FileName);
+                }
+                var response = client.Post<string>(request);
 
-                var response = client.Post<Friend>(request);
+                if(!String.IsNullOrEmpty(response.Data))
+                {
+                    model.PhotoUrl = response.Data;
+                    var client2 = new RestClient();
+                    var request2 = new RestRequest(_UriAPI + "Friends", DataFormat.Json);
+                    request2.AddJsonBody(model);
 
+                    var response2 = client2.Post<Friend>(request2);
+                }
                 return RedirectToAction(nameof(Index));
+
             }
             catch
             {

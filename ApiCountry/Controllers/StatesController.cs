@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiCountry.Models;
 using ApiCountry.Repository;
+using Azure.Storage.Blobs;
+using System.Globalization;
+using Microsoft.Extensions.Configuration;
 
 namespace ApiCountry.Controllers
 {
@@ -15,10 +18,12 @@ namespace ApiCountry.Controllers
     public class StatesController : ControllerBase
     {
         private readonly CountryContext _context;
+        private string ConnectionString { get; set; }
 
-        public StatesController(CountryContext context)
+        public StatesController(CountryContext context, IConfiguration configuration)
         {
             _context = context;
+            ConnectionString = configuration.GetConnectionString("blob");
         }
 
         // GET: api/States
@@ -52,7 +57,6 @@ namespace ApiCountry.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(state).State = EntityState.Modified;
 
             try
@@ -84,6 +88,24 @@ namespace ApiCountry.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetState", new { id = state.Id }, state);
+        }
+
+        [HttpPost("Photo")]
+        public async Task<ActionResult<string>> PostPhoto(IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    BlobContainerClient blobServiceClient = new BlobContainerClient(ConnectionString, "blob");
+                    blobServiceClient.CreateIfNotExists();
+                    DateTime now = DateTime.UtcNow;
+                    var blobClient = blobServiceClient.GetBlobClient($"{now.Ticks}-{file.FileName}");
+                    await blobClient.UploadAsync(stream);
+                    return blobClient.Uri.ToString();
+                }
+            }
+            return null;
         }
 
         // DELETE: api/States/5

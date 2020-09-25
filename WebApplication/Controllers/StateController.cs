@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiFriends.Models;
@@ -11,7 +12,7 @@ namespace WebApplication.Controllers
 {
     public class StateController : Controller
     {
-        private readonly string _UriAPI = "https://localhost:44364/api/";
+        private readonly string _UriAPI = "https://atazureapicountry.azurewebsites.net/api/";
 
         // GET: StateController
         public ActionResult Index()
@@ -40,7 +41,7 @@ namespace WebApplication.Controllers
         // POST: StateController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(State model)
+        public ActionResult Create(State model, IFormFile file)
         {
             try
             {
@@ -48,11 +49,24 @@ namespace WebApplication.Controllers
                     return View(model);
 
                 var client = new RestClient();
-                var request = new RestRequest(_UriAPI + "States", DataFormat.Json);
-                request.AddJsonBody(model);
+                var request = new RestRequest(_UriAPI + "States/Photo");
+                request.AlwaysMultipartFormData = true;
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    request.AddFile("file", fileBytes, file.FileName);
+                }
+                var response = client.Post<string>(request);
+                if (!String.IsNullOrEmpty(response.Data))
+                {
+                    model.PhotoUrl = response.Data;
+                    var client2 = new RestClient();
+                    var request2 = new RestRequest(_UriAPI + "States", DataFormat.Json);
+                    request2.AddJsonBody(model);
 
-                var response = client.Post<State>(request);
-
+                    var response2 = client.Post<State>(request2);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch

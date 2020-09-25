@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiFriends.Models;
 using ApiFriends.Repository;
+using Azure.Storage.Blobs;
+using System.Globalization;
+using Microsoft.Extensions.Configuration;
 
 namespace ApiFriends.Controllers
 {
@@ -15,10 +18,12 @@ namespace ApiFriends.Controllers
     public class FriendsController : ControllerBase
     {
         private readonly FriendContext _context;
+        private string ConnectionString { get; set; }
 
-        public FriendsController(FriendContext context)
+        public FriendsController(FriendContext context, IConfiguration configuration)
         {
             _context = context;
+            ConnectionString = configuration.GetConnectionString("blob");
         }
 
         // GET: api/Friends
@@ -65,7 +70,6 @@ namespace ApiFriends.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(friend).State = EntityState.Modified;
 
             try
@@ -97,6 +101,24 @@ namespace ApiFriends.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFriend", new { id = friend.Id }, friend);
+        }
+
+        [HttpPost("Photo")]
+        public async Task<ActionResult<string>> PostPhoto(IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    BlobContainerClient blobServiceClient = new BlobContainerClient(ConnectionString, "blob");
+                    blobServiceClient.CreateIfNotExists();
+                    DateTime now = DateTime.UtcNow;
+                    var blobClient = blobServiceClient.GetBlobClient($"{now.Ticks}-{file.FileName}");
+                    await blobClient.UploadAsync(stream);
+                    return blobClient.Uri.ToString();
+                }
+            }
+            return null;
         }
 
         // DELETE: api/Friends/5
